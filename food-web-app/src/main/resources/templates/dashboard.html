@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Supply & Nutrition Management</title>
+
+    <style>
+        /* Main dashboard theme */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #263238;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar navigation */
+        .sidebar {
+            width: 235px;
+            background: #163c35;
+            color: white;
+            padding: 28px 18px;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 35px;
+            line-height: 1.5;
+        }
+
+        .brand span {
+            color: #a8e6cf;
+        }
+
+        .nav-label {
+            color: #b8d4cd;
+            font-size: 12px;
+            margin: 24px 10px 10px;
+            text-transform: uppercase;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 10px;
+            margin: 5px 0;
+            color: #e8f5f1;
+            text-decoration: none;
+            border-radius: 7px;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #28594f;
+        }
+
+        /* Main content area */
+        .main {
+            flex: 1;
+            padding: 30px;
+            min-width: 0;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 28px;
+        }
+
+        .topbar h1 {
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .muted {
+            color: #73808c;
+            font-size: 14px;
+        }
+
+        .system-status {
+            background: #e0f5e9;
+            color: #176b43;
+            padding: 10px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        /* Summary statistic cards */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #2030400b;
+            border: 1px solid #e8edf2;
+        }
+
+        .stat-label {
+            color: #73808c;
+            font-size: 14px;
+            margin-bottom: 14px;
+        }
+
+        .stat-number {
+            font-size: 30px;
+            font-weight: bold;
+            color: #163c35;
+        }
+
+        .stat-note {
+            font-size: 12px;
+            color: #73808c;
+            margin-top: 9px;
+        }
+
+        /* Data tables */
+        .section {
+            background: white;
+            padding: 22px;
+            border: 1px solid #e8edf2;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px #2030400b;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 18px;
+        }
+
+        .section-header a {
+            color: #197653;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        th {
+            background: #f5f8f7;
+            color: #687780;
+            font-weight: 600;
+        }
+
+        th,
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #edf0f2;
+            white-space: nowrap;
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #e5f5eb;
+            color: #176b43;
+            font-size: 11px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 25px;
+            color: #7b8790;
+        }
+
+        .footer {
+            text-align: center;
+            color: #8a969e;
+            font-size: 12px;
+            padding: 15px;
+        }
+
+        /* Adapt the dashboard for smaller screens */
+        @media (max-width: 1100px) {
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 700px) {
+            .sidebar {
+                width: 75px;
+                padding: 20px 8px;
+            }
+
+            .brand {
+                font-size: 12px;
+                overflow-wrap: anywhere;
+            }
+
+            .sidebar a {
+                font-size: 11px;
+                padding: 10px 5px;
+                overflow-wrap: anywhere;
+            }
+
+            .nav-label {
+                display: none;
+            }
+
+            .main {
+                padding: 16px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .topbar h1 {
+                font-size: 22px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout">
+
+        <!-- Sidebar with dashboard navigation -->
+        <aside class="sidebar">
+            <div class="brand">Food<span>Care</span><br>Management</div>
+
+            <div class="nav-label">Workspace</div>
+            <a href="/" class="active">Dashboard</a>
+
+            <div class="nav-label">Nutrition</div>
+            <a href="http://localhost:8080/swagger-ui/index.html" target="_blank">
+                Beneficiaries & Nutrition
+            </a>
+            <a href="http://localhost:8080/swagger-ui/index.html" target="_blank">
+                Food Items & Programmes
+            </a>
+
+            <div class="nav-label">Supply Chain</div>
+            <a href="http://localhost:8082/swagger-ui/index.html" target="_blank">
+                Suppliers
+            </a>
+            <a href="http://localhost:8082/swagger-ui/index.html" target="_blank">
+                Inventory
+            </a>
+            <a href="http://localhost:8082/swagger-ui/index.html" target="_blank">
+                Procurement
+            </a>
+            <a href="http://localhost:8082/swagger-ui/index.html" target="_blank">
+                Distribution
+            </a>
+        </aside>
+
+        <!-- Dashboard content -->
+        <main class="main">
+            <header class="topbar">
+                <div>
+                    <h1>Food Supply Dashboard</h1>
+                    <p class="muted">
+                        Monitor nutrition programmes, stock and food distribution.
+                    </p>
+                </div>
+                <div class="system-status">● Management Overview</div>
+            </header>
+
+            <!-- Summary cards use live counts from the controller -->
+            <section class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">Beneficiaries</div>
+                    <div class="stat-number" th:text="${beneficiaryCount}">0</div>
+                    <div class="stat-note">Registered beneficiaries</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">Food Items</div>
+                    <div class="stat-number" th:text="${foodItemCount}">0</div>
+                    <div class="stat-note">Nutrition catalogue</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">Active Programmes</div>
+                    <div class="stat-number" th:text="${programmeCount}">0</div>
+                    <div class="stat-note">Registered programmes</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">Suppliers</div>
+                    <div class="stat-number" th:text="${supplierCount}">0</div>
+                    <div class="stat-note">Registered suppliers</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">Inventory Batches</div>
+                    <div class="stat-number" th:text="${inventoryCount}">0</div>
+                    <div class="stat-note">Tracked batches</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">Procurement Requests</div>
+                    <div class="stat-number" th:text="${procurementCount}">0</div>
+                    <div class="stat-note">All request statuses</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">Distribution Plans</div>
+                    <div class="stat-number" th:text="${distributionCount}">0</div>
+                    <div class="stat-note">All distribution statuses</div>
+                </div>
+            </section>
+
+            <!-- Inventory alerts for stock and expiry risks -->
+            <section class="stats">
+
+                <div class="stat-card">
+                    <div class="stat-label">Low Stock Alerts</div>
+                    <div class="stat-number" th:text="${#lists.size(lowStock)}">0</div>
+                    <div class="stat-note">Batches at or below minimum stock</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">Expiring Soon</div>
+                    <div class="stat-number" th:text="${#lists.size(expiring)}">0</div>
+                    <div class="stat-note">Batches expiring within 30 days</div>
+                </div>
+
+            </section>
+
+            <!-- Key supply-chain performance indicators -->
+            <section class="stats">
+
+                <div class="stat-card">
+                    <div class="stat-label">Total Available Stock</div>
+                    <div class="stat-number" th:text="${totalStock}">90</div>
+                    <div class="stat-note">Sum of quantities across inventory batches</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">Pending Procurement</div>
+                    <div class="stat-number" th:text="${pendingProcurement}">0</div>
+                    <div class="stat-note">Requests awaiting a decision</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">Completed Distributions</div>
+                    <div class="stat-number" th:text="${completedDistributions}">1</div>
+                    <div class="stat-note">Successfully delivered plans</div>
+                </div>
+
+            </section>
+
+
+            <!-- Show low-stock batch details -->
+            <section class="section">
+                <div class="section-header">
+                    <h2>Low Stock Alerts</h2>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Food Item</th>
+                                <th>Batch</th>
+                                <th>Available</th>
+                                <th>Minimum Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="batch : ${lowStock}">
+                                <td th:text="${batch.foodItemName}">Rice</td>
+                                <td th:text="${batch.batchNumber}">RICE-001</td>
+                                <td>
+                                    <span th:text="${batch.quantity}">10</span>
+                                    <span th:text="${batch.unit}">kg</span>
+                                </td>
+                                <td>
+                                    <span th:text="${batch.minimumStock}">20</span>
+                                    <span th:text="${batch.unit}">kg</span>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(lowStock)}">
+                                <td colspan="4" class="empty">
+                                    No low-stock batches. Inventory levels are sufficient.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Show batches nearing expiry -->
+            <section class="section">
+                <div class="section-header">
+                    <h2>Expiry Alerts — Next 30 Days</h2>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Food Item</th>
+                                <th>Batch</th>
+                                <th>Available</th>
+                                <th>Expiry Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="batch : ${expiring}">
+                                <td th:text="${batch.foodItemName}">Rice</td>
+                                <td th:text="${batch.batchNumber}">RICE-001</td>
+                                <td>
+                                    <span th:text="${batch.quantity}">10</span>
+                                    <span th:text="${batch.unit}">kg</span>
+                                </td>
+                                <td th:text="${batch.expiryDate}">2026-10-20</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(expiring)}">
+                                <td colspan="4" class="empty">
+                                    No batches expiring within the next 30 days.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+
+            <!-- Inventory table -->
+            <section class="section">
+                <div class="section-header">
+                    <h2>Current Inventory</h2>
+                    <a href="http://localhost:8082/swagger-ui/index.html" target="_blank">Manage inventory ↗</a>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Food Item</th>
+                                <th>Batch Number</th>
+                                <th>Available Quantity</th>
+                                <th>Minimum Stock</th>
+                                <th>Expiry Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="batch : ${inventory}">
+                                <td th:text="${batch.foodItemName}">Rice</td>
+                                <td th:text="${batch.batchNumber}">RICE-001</td>
+                                <td>
+                                    <span th:text="${batch.quantity}">90</span>
+                                    <span th:text="${batch.unit}">kg</span>
+                                </td>
+                                <td>
+                                    <span th:text="${batch.minimumStock}">20</span>
+                                    <span th:text="${batch.unit}">kg</span>
+                                </td>
+                                <td th:text="${batch.expiryDate}">2027-10-10</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(inventory)}">
+                                <td colspan="5" class="empty">
+                                    No inventory records available.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Procurement table -->
+            <section class="section">
+                <div class="section-header">
+                    <h2>Procurement Requests</h2>
+                    <a href="http://localhost:8082/swagger-ui/index.html" target="_blank">Manage requests ↗</a>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Food Item</th>
+                                <th>Quantity</th>
+                                <th>Estimated Cost</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="request : ${procurement}">
+                                <td th:text="${request.requestId}">1</td>
+                                <td th:text="${request.foodItemName}">Rice</td>
+                                <td>
+                                    <span th:text="${request.quantity}">200</span>
+                                    <span th:text="${request.unit}">kg</span>
+                                </td>
+                                <td th:text="${request.estimatedCost}">12000</td>
+                                <td>
+                                    <span class="pill" th:text="${request.status}">
+                                        PENDING
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(procurement)}">
+                                <td colspan="5" class="empty">
+                                    No procurement requests available.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Distribution table -->
+            <section class="section">
+                <div class="section-header">
+                    <h2>Recent Distributions</h2>
+                    <a href="http://localhost:8082/swagger-ui/index.html" target="_blank">Manage distributions ↗</a>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Distribution ID</th>
+                                <th>Beneficiary ID</th>
+                                <th>Food Item</th>
+                                <th>Planned Quantity</th>
+                                <th>Delivered Quantity</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="distribution : ${distributions}">
+                                <td th:text="${distribution.distributionId}">1</td>
+                                <td th:text="${distribution.beneficiaryId}">1</td>
+                                <td th:text="${distribution.inventoryBatch.foodItemName}">
+                                    Rice
+                                </td>
+                                <td>
+                                    <span th:text="${distribution.plannedQuantity}">10</span>
+                                    <span th:text="${distribution.unit}">kg</span>
+                                </td>
+                                <td>
+                                    <span th:text="${distribution.deliveredQuantity}">10</span>
+                                    <span th:text="${distribution.unit}">kg</span>
+                                </td>
+                                <td>
+                                    <span class="pill" th:text="${distribution.status}">
+                                        DELIVERED
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(distributions)}">
+                                <td colspan="6" class="empty">
+                                    No distribution records available.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <footer class="footer">
+                Food Supply & Nutrition Management System
+            </footer>
+        </main>
+    </div>
+</body>
+
+</html>

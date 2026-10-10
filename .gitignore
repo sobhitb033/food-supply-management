@@ -1,0 +1,24 @@
+# Maven build output
+**/target/
+**/build/
+*.class
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# Secrets
+.env
+.env.*
+!.env.example
+application-local.properties
+
+# macOS and logs
+.DS_Store
+*.log
+logs/
+
+# Local databases
+*.db
+*.sqlite
