@@ -7,7 +7,7 @@
     <title>Food Supply & Nutrition Management</title>
 
     <style>
-        /* Main dashboard theme */
+        /* main dashboard */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -100,7 +100,7 @@
             white-space: nowrap;
         }
 
-        /* Summary statistic cards */
+        /* summary cards */
         .stats {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -134,7 +134,7 @@
             margin-top: 9px;
         }
 
-        /* Data tables */
+        /* data tables */
         .section {
             background: white;
             padding: 22px;
@@ -209,7 +209,7 @@
             padding: 15px;
         }
 
-        /* Adapt the dashboard for smaller screens */
+        /* responsive */
         @media (max-width: 1100px) {
             .stats {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -264,7 +264,7 @@
 <body>
     <div class="layout">
 
-        <!-- Sidebar with dashboard navigation -->
+        <!-- sidebar with dashboard navigation -->
         <aside class="sidebar">
             <div class="brand">Food<span>Care</span><br>Management</div>
 
@@ -294,7 +294,7 @@
             </a>
         </aside>
 
-        <!-- Dashboard content -->
+        <!-- dashboard content -->
         <main class="main">
             <header class="topbar">
                 <div>
@@ -306,7 +306,7 @@
                 <div class="system-status">● Management Overview</div>
             </header>
 
-            <!-- Summary cards use live counts from the controller -->
+            <!-- summary cards use live counts from the controller -->
             <section class="stats">
                 <div class="stat-card">
                     <div class="stat-label">Beneficiaries</div>
@@ -351,7 +351,7 @@
                 </div>
             </section>
 
-            <!-- Inventory alerts for stock and expiry risks -->
+            <!-- inventory alerts for stock and expiry risks -->
             <section class="stats">
 
                 <div class="stat-card">
@@ -368,7 +368,7 @@
 
             </section>
 
-            <!-- Key supply-chain performance indicators -->
+            <!-- key supply-chain performance indicators -->
             <section class="stats">
 
                 <div class="stat-card">
@@ -392,7 +392,7 @@
             </section>
 
 
-            <!-- Show low-stock batch details -->
+            <!-- show low-stock batch details -->
             <section class="section">
                 <div class="section-header">
                     <h2>Low Stock Alerts</h2>
@@ -431,7 +431,7 @@
                 </div>
             </section>
 
-            <!-- Show batches nearing expiry -->
+            <!-- show batches nearing expiry -->
             <section class="section">
                 <div class="section-header">
                     <h2>Expiry Alerts — Next 30 Days</h2>
@@ -468,7 +468,7 @@
             </section>
 
 
-            <!-- Inventory table -->
+            <!-- inventory table -->
             <section class="section">
                 <div class="section-header">
                     <h2>Current Inventory</h2>
@@ -510,7 +510,7 @@
                 </div>
             </section>
 
-            <!-- Procurement table -->
+            <!-- procurement table -->
             <section class="section">
                 <div class="section-header">
                     <h2>Procurement Requests</h2>
@@ -553,7 +553,7 @@
                 </div>
             </section>
 
-            <!-- Distribution table -->
+            <!-- distribution table -->
             <section class="section">
                 <div class="section-header">
                     <h2>Recent Distributions</h2>
